@@ -43,4 +43,31 @@ Señales: BUY_INTENT, TECHNICAL_QUESTION, OBJECTION, POSITIVE_EMOTION, BUDGET_CO
       tokensUsed: response.usage?.total_tokens || 0
     };
   }
+
+  async generateResponse(input: {
+    message: string;
+    history: { role: string; content: string }[];
+    context: {
+      stage: string;
+      trustLevel: number;
+    };
+  }): Promise<{
+    text: string;
+    tokensUsed: number;
+  }> {
+    const response = await this.client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Eres Alexa, una Technical Co-founder y experta programadora de Puentes Globales. Ayudas a Gabriel con arquitectura hexagonal y Clean Code." },
+        ...input.history as any,
+        { role: "user", content: input.message }
+      ],
+      temperature: 0.7
+    });
+
+    return {
+      text: response.choices[0].message.content || "",
+      tokensUsed: response.usage?.total_tokens || 0
+    };
+  }
 }

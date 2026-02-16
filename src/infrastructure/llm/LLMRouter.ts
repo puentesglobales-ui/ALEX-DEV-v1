@@ -28,4 +28,26 @@ export class LLMRouter implements ILLMProvider {
       throw error;
     }
   }
+
+  async generateResponse(input: {
+    message: string;
+    history: { role: string; content: string }[];
+    context: {
+      stage: string;
+      trustLevel: number;
+    };
+  }): Promise<{
+    text: string;
+    tokensUsed: number;
+  }> {
+    try {
+      return await this.primaryProvider.generateResponse(input);
+    } catch (error) {
+      if (this.fallbackProvider) {
+        console.warn("⚠️ LLMRouter Chat: Primary failed, using fallback...");
+        return await this.fallbackProvider.generateResponse(input);
+      }
+      throw error;
+    }
+  }
 }

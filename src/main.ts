@@ -10,6 +10,7 @@ import { ScoreEngine } from "./domain/services/ScoreEngine";
 
 // Application
 import { TagMessage } from "./application/use-cases/TagMessage";
+import { GenerateResponse } from "./application/use-cases/GenerateResponse";
 
 // Infrastructure
 import { PrismaConversationRepository } from "./infrastructure/persistence/PrismaConversationRepository";
@@ -54,6 +55,21 @@ async function bootstrap() {
       scoreEngine,
       costTracker
     );
+
+    const generateResponse = new GenerateResponse(
+      conversationRepo,
+      eventRepo,
+      llmRouter
+    );
+
+    app.post("/brain/chat", async (request, reply) => {
+      await apiKeyAuth(request, reply, env.API_KEY);
+      const { userId, message } = request.body as { userId: string; message: string };
+      if (!userId || !message) return reply.status(400).send({ error: "Missing userId or message" });
+
+      const result = await generateResponse.execute({ userId, message });
+      return result;
+    });
 
     app.post("/brain/tag", async (request, reply) => {
       await apiKeyAuth(request, reply, env.API_KEY);

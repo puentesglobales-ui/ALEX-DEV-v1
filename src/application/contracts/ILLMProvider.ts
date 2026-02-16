@@ -11,4 +11,16 @@ export interface ILLMProvider {
     signals: string[];
     tokensUsed: number;
   }>;
+
+  generateResponse(input: {
+    message: string;
+    history: { role: string; content: string }[];
+    context: {
+      stage: string;
+      trustLevel: number;
+    };
+  }): Promise<{
+    text: string;
+    tokensUsed: number;
+  }>;
 }

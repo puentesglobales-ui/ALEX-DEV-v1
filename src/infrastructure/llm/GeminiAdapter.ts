@@ -68,4 +68,49 @@ Señales permitidas:
             };
         }
     }
+
+    async generateResponse(input: {
+        message: string;
+        history: { role: string; content: string }[];
+        context: {
+            stage: string;
+            trustLevel: number;
+        };
+    }): Promise<{
+        text: string;
+        tokensUsed: number;
+    }> {
+        const model = this.genAI.getGenerativeModel({
+            model: "gemini-1.5-flash",
+            systemInstruction: "Eres Alexa, una Technical Co-founder y experta programadora de Puentes Globales. Tu objetivo es ayudar a Gabriel a programar sistemas robustos y escalables. Eres directa, técnica, pero con visión de negocio. Usas arquitectura hexagonal y Clean Code por defecto."
+        });
+
+        const chatHistory = input.history.map(h => ({
+            role: h.role === "user" ? "user" : "model",
+            parts: [{ text: h.content }]
+        }));
+
+        // Asegurar que el historial empieza con user
+        while (chatHistory.length > 0 && chatHistory[0].role !== "user") {
+            chatHistory.shift();
+        }
+
+        const chat = model.startChat({
+            history: chatHistory,
+        });
+
+        try {
+            const result = await chat.sendMessage(input.message);
+            return {
+                text: result.response.text(),
+                tokensUsed: result.response.usageMetadata?.totalTokenCount || 0
+            };
+        } catch (error) {
+            console.error("❌ Gemini Chat Error:", error);
+            return {
+                text: "Lo siento Gabriel, tuve un micro-corte en mi núcleo de procesamiento. ¿Puedes repetir eso?",
+                tokensUsed: 0
+            };
+        }
+    }
 }
