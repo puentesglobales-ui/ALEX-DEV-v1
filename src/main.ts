@@ -82,21 +82,36 @@ async function bootstrap() {
     );
 
     app.post("/brain/chat", async (request, reply) => {
-      await apiKeyAuth(request, reply, env.API_KEY);
-      const { userId, message } = request.body as { userId: string; message: string };
-      if (!userId || !message) return reply.status(400).send({ error: "Missing userId or message" });
+      try {
+        await apiKeyAuth(request, reply, env.API_KEY);
+        const { userId, message } = request.body as { userId: string; message: string };
+        if (!userId || !message) return reply.status(400).send({ error: "Missing userId or message" });
 
-      const result = await generateResponse.execute({ userId, message });
-      return result;
+        const result = await generateResponse.execute({ userId, message });
+        return result;
+      } catch (err: any) {
+        request.log.error(err);
+        return reply.status(500).send({
+          error: "Internal Server Error",
+          message: err.message,
+          stack: env.NODE_ENV === 'development' ? err.stack : undefined,
+          hint: "Check DATABASE_URL and LLM API Keys in Render environment variables."
+        });
+      }
     });
 
     app.post("/brain/tag", async (request, reply) => {
-      await apiKeyAuth(request, reply, env.API_KEY);
-      const { userId, message } = request.body as { userId: string; message: string };
-      if (!userId || !message) return reply.status(400).send({ error: "Missing userId or message" });
+      try {
+        await apiKeyAuth(request, reply, env.API_KEY);
+        const { userId, message } = request.body as { userId: string; message: string };
+        if (!userId || !message) return reply.status(400).send({ error: "Missing userId or message" });
 
-      const result = await tagMessage.execute({ userId, message });
-      return result;
+        const result = await tagMessage.execute({ userId, message });
+        return result;
+      } catch (err: any) {
+        request.log.error(err);
+        return reply.status(500).send({ error: "Internal Server Error", message: err.message });
+      }
     });
 
     app.get("/brain/timeline/:userId", async (request, reply) => {
