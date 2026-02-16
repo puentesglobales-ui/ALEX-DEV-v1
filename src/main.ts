@@ -17,6 +17,7 @@ import { PrismaConversationRepository } from "./infrastructure/persistence/Prism
 import { PrismaConversationEventRepository } from "./infrastructure/persistence/PrismaConversationEventRepository";
 import { OpenAIAdapter } from "./infrastructure/llm/OpenAIAdapter";
 import { GeminiAdapter } from "./infrastructure/llm/GeminiAdapter";
+import { ClaudeAdapter } from "./infrastructure/llm/ClaudeAdapter";
 import { LLMRouter } from "./infrastructure/llm/LLMRouter";
 import { CostTracker } from "./infrastructure/cost/CostTracker";
 
@@ -36,11 +37,17 @@ async function bootstrap() {
     const conversationRepo = new PrismaConversationRepository(prisma);
     const eventRepo = new PrismaConversationEventRepository(prisma);
 
-    const openAIAdapter = new OpenAIAdapter(env.OPENAI_API_KEY);
-    const geminiAdapter = new GeminiAdapter(env.GEMINI_API_KEY);
+    // Configurar Adaptadores
+    const claudeAdapter = new ClaudeAdapter(env.CLAUDE_API_KEY);
+    const geminiProAdapter = new GeminiAdapter(env.GEMINI_API_KEY, env.GEMINI_MODEL);
+    const chatGPTAdapter = new OpenAIAdapter(env.OPENAI_API_KEY);
 
-    // Prioridad: Gemini (Gratis) -> OpenAI (Backup)
-    const llmRouter = new LLMRouter(geminiAdapter, openAIAdapter);
+    // Cadena de Prioridad: Claude (Calidad) -> Gemini Pro -> ChatGPT (Backup)
+    const llmRouter = new LLMRouter([
+      claudeAdapter,
+      geminiProAdapter,
+      chatGPTAdapter
+    ]);
     const costTracker = new CostTracker({
       costPer1kTokens: env.COST_PER_1K_TOKENS,
       budgetThreshold: env.BUDGET_THRESHOLD

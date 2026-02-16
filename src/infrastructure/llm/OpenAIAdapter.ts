@@ -56,7 +56,7 @@ Señales: BUY_INTENT, TECHNICAL_QUESTION, OBJECTION, POSITIVE_EMOTION, BUDGET_CO
     tokensUsed: number;
   }> {
     const response = await this.client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       messages: [
         { role: "system", content: "Eres Alexa, una Technical Co-founder y experta programadora de Puentes Globales. Ayudas a Gabriel con arquitectura hexagonal y Clean Code." },
         ...input.history as any,

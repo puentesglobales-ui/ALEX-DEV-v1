@@ -1,10 +1,11 @@
 import { ILLMProvider } from "../../application/contracts/ILLMProvider";
 
 export class LLMRouter implements ILLMProvider {
-  constructor(
-    private primaryProvider: ILLMProvider,
-    private fallbackProvider?: ILLMProvider
-  ) { }
+  private providers: ILLMProvider[];
+
+  constructor(providers: ILLMProvider[]) {
+    this.providers = providers;
+  }
 
   async classify(input: {
     message: string;
@@ -18,15 +19,17 @@ export class LLMRouter implements ILLMProvider {
     signals: string[];
     tokensUsed: number;
   }> {
-    try {
-      return await this.primaryProvider.classify(input);
-    } catch (error) {
-      if (this.fallbackProvider) {
-        console.warn("⚠️ LLMRouter: Primary provider failed, using fallback...");
-        return await this.fallbackProvider.classify(input);
+    let lastError = new Error("No providers available");
+
+    for (const provider of this.providers) {
+      try {
+        return await provider.classify(input);
+      } catch (error) {
+        lastError = error as Error;
+        console.warn(`⚠️ LLMRouter Classify: Provider failed, trying next...`);
       }
-      throw error;
     }
+    throw lastError;
   }
 
   async generateResponse(input: {
@@ -40,14 +43,16 @@ export class LLMRouter implements ILLMProvider {
     text: string;
     tokensUsed: number;
   }> {
-    try {
-      return await this.primaryProvider.generateResponse(input);
-    } catch (error) {
-      if (this.fallbackProvider) {
-        console.warn("⚠️ LLMRouter Chat: Primary failed, using fallback...");
-        return await this.fallbackProvider.generateResponse(input);
+    let lastError = new Error("No providers available");
+
+    for (const provider of this.providers) {
+      try {
+        return await provider.generateResponse(input);
+      } catch (error) {
+        lastError = error as Error;
+        console.warn(`⚠️ LLMRouter Chat: Provider failed, trying next...`);
       }
-      throw error;
     }
+    throw lastError;
   }
 }

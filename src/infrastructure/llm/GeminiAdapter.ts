@@ -3,9 +3,11 @@ import { ILLMProvider } from "../../application/contracts/ILLMProvider";
 
 export class GeminiAdapter implements ILLMProvider {
     private genAI: GoogleGenerativeAI;
+    private modelName: string;
 
-    constructor(apiKey: string) {
+    constructor(apiKey: string, modelName: string = "gemini-1.5-flash") {
         this.genAI = new GoogleGenerativeAI(apiKey);
+        this.modelName = modelName;
     }
 
     async classify(input: {
@@ -21,7 +23,7 @@ export class GeminiAdapter implements ILLMProvider {
         tokensUsed: number;
     }> {
         const model = this.genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
+            model: this.modelName,
             generationConfig: { responseMimeType: "application/json" }
         });
 
@@ -81,7 +83,7 @@ Señales permitidas:
         tokensUsed: number;
     }> {
         const model = this.genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
+            model: this.modelName,
             systemInstruction: "Eres Alexa, una Technical Co-founder y experta programadora de Puentes Globales. Tu objetivo es ayudar a Gabriel a programar sistemas robustos y escalables. Eres directa, técnica, pero con visión de negocio. Usas arquitectura hexagonal y Clean Code por defecto."
         });
 
