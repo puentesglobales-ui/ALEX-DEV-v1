@@ -18,6 +18,7 @@ import { PrismaConversationEventRepository } from "./infrastructure/persistence/
 import { OpenAIAdapter } from "./infrastructure/llm/OpenAIAdapter";
 import { GeminiAdapter } from "./infrastructure/llm/GeminiAdapter";
 import { ClaudeAdapter } from "./infrastructure/llm/ClaudeAdapter";
+import { DeepSeekAdapter } from "./infrastructure/llm/DeepSeekAdapter";
 import { LLMRouter } from "./infrastructure/llm/LLMRouter";
 import { CostTracker } from "./infrastructure/cost/CostTracker";
 
@@ -37,16 +38,20 @@ async function bootstrap() {
     const conversationRepo = new PrismaConversationRepository(prisma);
     const eventRepo = new PrismaConversationEventRepository(prisma);
 
-    // Configurar Adaptadores
+    // Configurar Adaptadores (Los 5 Fantásticos)
     const claudeAdapter = new ClaudeAdapter(env.CLAUDE_API_KEY);
-    const geminiProAdapter = new GeminiAdapter(env.GEMINI_API_KEY, env.GEMINI_MODEL);
     const chatGPTAdapter = new OpenAIAdapter(env.OPENAI_API_KEY);
+    const deepSeekAdapter = new DeepSeekAdapter(env.DEEPSEEK_API_KEY);
+    const geminiProAdapter = new GeminiAdapter(env.GEMINI_API_KEY, "gemini-1.5-pro");
+    const geminiFlashAdapter = new GeminiAdapter(env.GEMINI_API_KEY, "gemini-1.5-flash");
 
-    // Cadena de Prioridad: Claude (Calidad) -> Gemini Pro -> ChatGPT (Backup)
+    // Prioridad Sugerida: Claude (Máxima Calidad) -> Gemini Pro -> ChatGPT -> DeepSeek -> Gemini Flash (Gratis/Rápido)
     const llmRouter = new LLMRouter([
       claudeAdapter,
       geminiProAdapter,
-      chatGPTAdapter
+      chatGPTAdapter,
+      deepSeekAdapter,
+      geminiFlashAdapter
     ]);
     const costTracker = new CostTracker({
       costPer1kTokens: env.COST_PER_1K_TOKENS,

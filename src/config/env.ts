@@ -8,6 +8,7 @@ export const env = {
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || "",
   CLAUDE_API_KEY: process.env.CLAUDE_API_KEY || "",
+  DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY || "",
   GEMINI_MODEL: process.env.GEMINI_MODEL || "gemini-1.5-flash",
   API_KEY: process.env.API_KEY || "supersecretkey",
   COST_PER_1K_TOKENS: parseFloat(process.env.COST_PER_1K_TOKENS || "0.02"),
