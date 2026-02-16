@@ -8,6 +8,7 @@ export async function apiKeyAuth(
   const providedKey = request.headers["x-api-key"];
 
   if (!providedKey || providedKey !== apiKey) {
-    return reply.status(401).send({ error: "Unauthorized" });
+    reply.status(401).send({ error: "Unauthorized" });
+    throw new Error("Unauthorized");
   }
 }

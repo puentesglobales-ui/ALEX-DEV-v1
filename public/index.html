@@ -237,7 +237,11 @@
                 });
                 const data = await res.json();
 
-                buffer.innerHTML += `<div class="flex gap-4"><span class="text-sky-500 font-bold">[ALEX]</span><p class="text-slate-100">${data.response}</p></div>`;
+                if (res.ok) {
+                    buffer.innerHTML += `<div class="flex gap-4"><span class="text-sky-500 font-bold">[ALEX]</span><p class="text-slate-100">${data.response || 'Sin respuesta'}</p></div>`;
+                } else {
+                    buffer.innerHTML += `<div class="flex gap-4 text-red-500"><span class="font-bold">[ERR]</span><p>${data.error || 'Fallo en la respuesta (401/500)'}</p></div>`;
+                }
                 buffer.scrollTop = buffer.scrollHeight;
 
                 updateStats();
