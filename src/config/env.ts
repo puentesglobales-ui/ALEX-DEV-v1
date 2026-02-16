@@ -10,7 +10,7 @@ export const env = {
   CLAUDE_API_KEY: process.env.CLAUDE_API_KEY || "",
   DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY || "",
   GEMINI_MODEL: process.env.GEMINI_MODEL || "gemini-1.5-flash",
-  API_KEY: process.env.API_KEY || "supersecretkey",
+  API_KEY: process.env.API_KEY || "ALEX_BRAIN_SECRET_2026",
   COST_PER_1K_TOKENS: parseFloat(process.env.COST_PER_1K_TOKENS || "0.02"),
   BUDGET_THRESHOLD: parseFloat(process.env.BUDGET_THRESHOLD || "10.0"),
   NODE_ENV: process.env.NODE_ENV || "development"
