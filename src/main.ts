@@ -1,6 +1,8 @@
 import Fastify from "fastify";
 import rateLimit from "@fastify/rate-limit";
 import cors from "@fastify/cors";
+import fastifyStatic from "@fastify/static";
+import path from "path";
 import { PrismaClient } from "@prisma/client";
 import { env, validateEnv } from "./config/env";
 import { apiKeyAuth } from "./middleware/apiKeyAuth";
@@ -32,6 +34,11 @@ async function bootstrap() {
     await app.register(rateLimit, {
       max: 100,
       timeWindow: "1 minute"
+    });
+
+    await app.register(fastifyStatic, {
+      root: path.join(__dirname, "../public"),
+      prefix: "/",
     });
 
     const prisma = new PrismaClient();

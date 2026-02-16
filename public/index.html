@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Azul - Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --brand-blue: #0ea5e9;
+            --brand-dark: #0f172a;
+            --brand-glass: rgba(30, 41, 59, 0.7);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: #f8fafc;
+            overflow: hidden;
+        }
+
+        .glass {
+            background: var(--brand-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .neon-border {
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        @keyframes pulse-slow {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
+        .brain-glow {
+            animation: pulse-slow 4s infinite ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="h-screen flex flex-col">
+    <!-- Top Nav -->
+    <nav class="h-16 glass flex items-center justify-between px-8 border-b border-white/5 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center neon-border">
+                <i data-lucide="brain-circuit" class="text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">ALEX <span class="text-sky-400">AZUL</span></h1>
+                <p class="text-[10px] text-sky-400 font-bold tracking-[0.2em] uppercase">Neural Command Center v1.0</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-6 text-sm font-medium text-slate-400">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span>SYSTEM ONLINE</span>
+            </div>
+            <div class="h-4 w-[1px] bg-white/10"></div>
+            <div class="flex items-center gap-2">
+                <i data-lucide="database" class="w-4 h-4"></i>
+                <span id="user-display">USER: DISCOVERY</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 flex overflow-hidden p-6 gap-6">
+        <!-- Sidebar - Monitor -->
+        <aside class="w-80 flex flex-col gap-6">
+            <div class="glass rounded-3xl p-6 flex-1 flex flex-col">
+                <h2 class="text-xs font-bold text-sky-400 uppercase tracking-widest mb-6 px-2">Cognitive Stats</h2>
+
+                <div class="space-y-6">
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs text-slate-400">Trust Level</span>
+                            <span id="trust-val" class="text-sm font-bold text-sky-400">0%</span>
+                        </div>
+                        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                            <div id="trust-bar" class="h-full bg-sky-500 transition-all duration-1000"
+                                style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
+                            <span class="text-[10px] text-slate-400 block mb-1 uppercase">Readiness</span>
+                            <span id="score-val" class="text-xl font-bold">0</span>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
+                            <span class="text-[10px] text-slate-400 block mb-1 uppercase">Stage</span>
+                            <span id="stage-val" class="text-xs font-bold text-sky-400">DISCOVERY</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
+                        <span class="text-[10px] text-slate-400 block mb-2 uppercase">Technical Tags</span>
+                        <div id="tags-container" class="flex flex-wrap gap-2">
+                            <span
+                                class="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-1 rounded-md border border-sky-500/20">Waiting...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-6 border-t border-white/5">
+                    <div id="cost-monitor" class="text-[10px] text-slate-500 mono">
+                        SESSION_COST: $0.0000
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <section class="flex-1 flex flex-col gap-6">
+            <!-- Chat Window -->
+            <div class="glass flex-1 rounded-3xl flex flex-col overflow-hidden">
+                <div class="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                            <i data-lucide="bot" class="w-4 h-4 text-sky-400"></i>
+                        </div>
+                        <span class="text-sm font-semibold">Alex Neural Link</span>
+                    </div>
+                    <button onclick="clearChat()"
+                        class="text-xs text-slate-500 hover:text-red-400 transition-colors">CLEAR_BUFFER</button>
+                </div>
+
+                <div id="chat-buffer" class="flex-1 overflow-y-auto p-6 space-y-6 mono text-sm">
+                    <!-- Messages will appear here -->
+                    <div class="flex gap-4 opacity-50">
+                        <span class="text-sky-500 font-bold">[SYS]</span>
+                        <p class="text-slate-400">Conexión establecida. Esperando entrada neuronal...</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-white/[0.02] border-t border-white/5">
+                    <div class="flex gap-3">
+                        <input id="user-input" type="text" placeholder="Comando o consulta..."
+                            class="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-3 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all mono">
+                        <button onclick="sendMessage()"
+                            class="bg-sky-500 hover:bg-sky-400 text-white px-6 rounded-2xl transition-all shadow-lg hover:shadow-sky-500/20 active:scale-95">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline / Reasoning -->
+        <aside class="w-96 glass rounded-3xl p-6 flex flex-col">
+            <h2 class="text-xs font-bold text-sky-400 uppercase tracking-widest mb-6 px-2">Memory Timeline</h2>
+            <div id="timeline" class="flex-1 overflow-y-auto space-y-4 pr-2">
+                <!-- Events go here -->
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        const userId = "Gabriel_Terminal"; // Default
+        const API_BASE = ""; // Same origin
+        const API_KEY = "ALEX_BRAIN_SECRET_2026"; // User should set this or we pass it via URL
+
+        async function updateStats() {
+            try {
+                const res = await fetch(`${API_BASE}/brain/timeline/${userId}`, {
+                    headers: { 'x-api-key': API_KEY }
+                });
+                const data = await res.json();
+
+                if (data.conversation) {
+                    const c = data.conversation;
+                    document.getElementById('trust-val').innerText = `${c.trustLevel}%`;
+                    document.getElementById('trust-bar').style.width = `${c.trustLevel}%`;
+                    document.getElementById('score-val').innerText = c.currentScore;
+                    document.getElementById('stage-val').innerText = c.stage.toUpperCase();
+                    document.getElementById('cost-monitor').innerText = `SESSION_COST: $${c.conversationCost.toFixed(4)}`;
+
+                    const tagsCont = document.getElementById('tags-container');
+                    tagsCont.innerHTML = c.lastTags.map(t => `<span class="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-1 rounded-md border border-sky-500/20">${t}</span>`).join('');
+                }
+
+                if (data.events) {
+                    const timeline = document.getElementById('timeline');
+                    timeline.innerHTML = data.events.slice().reverse().map(e => `
+                        <div class="p-3 bg-white/5 rounded-xl border border-white/5">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-bold text-sky-500">${e.type}</span>
+                                <span class="text-[9px] text-slate-500">${new Date(e.createdAt).toLocaleTimeString()}</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mono truncate">${JSON.stringify(e.metadata)}</p>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // UI Feedback
+            const buffer = document.getElementById('chat-buffer');
+            buffer.innerHTML += `<div class="flex gap-4"><span class="text-emerald-500 font-bold">[USER]</span><p class="text-slate-200">${message}</p></div>`;
+            input.value = '';
+            buffer.scrollTop = buffer.scrollHeight;
+
+            try {
+                const res = await fetch(`${API_BASE}/brain/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    },
+                    body: JSON.stringify({ userId, message })
+                });
+                const data = await res.json();
+
+                buffer.innerHTML += `<div class="flex gap-4"><span class="text-sky-500 font-bold">[ALEX]</span><p class="text-slate-100">${data.response}</p></div>`;
+                buffer.scrollTop = buffer.scrollHeight;
+
+                updateStats();
+            } catch (e) {
+                buffer.innerHTML += `<div class="flex gap-4 text-red-400"><span class="font-bold">[ERR]</span><p>Fallo crítico en el enlace neuronal.</p></div>`;
+            }
+        }
+
+        function clearChat() {
+            document.getElementById('chat-buffer').innerHTML = '';
+        }
+
+        // Auto-update stats every 5s
+        setInterval(updateStats, 5000);
+        updateStats();
+
+        // Enter key listener
+        document.getElementById('user-input').onkeydown = (e) => {
+            if (e.key === 'Enter') sendMessage();
+        };
+
+    </script>
+</body>
+
+</html>
