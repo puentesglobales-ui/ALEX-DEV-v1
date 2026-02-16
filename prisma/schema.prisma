@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ConversationState {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  currentScore      Int      @default(0)
+  cumulativeScore   Int      @default(0)
+  lastTags          String[]
+  trustLevel        Int      @default(50)
+  stage             String   @default("discovery")
+  messageCount      Int      @default(0)
+  conversationCost  Float    @default(0)
+  overBudget        Boolean  @default(false)
+  lastInteractionAt DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  events            ConversationEvent[]
+}
+
+model ConversationEvent {
+  id             String   @id @default(uuid())
+  conversationId String
+  type           String
+  metadata       Json
+  createdAt      DateTime @default(now())
+
+  conversation   ConversationState @relation(fields: [conversationId], references: [id])
+}

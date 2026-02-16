@@ -1,0 +1,30 @@
+{
+  "name": "alex-azul",
+  "version": "1.0.0",
+  "description": "Alex Azul v1 - Regenerado",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@fastify/rate-limit": "^9.1.0",
+    "@google/generative-ai": "^0.24.1",
+    "@prisma/client": "^5.9.1",
+    "dotenv": "^16.4.1",
+    "fastify": "^4.26.0",
+    "openai": "^4.28.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.16",
+    "jest": "^29.7.0",
+    "prisma": "^5.9.1",
+    "ts-jest": "^29.1.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

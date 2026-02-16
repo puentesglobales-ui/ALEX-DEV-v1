@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: alex
+      POSTGRES_PASSWORD: alexpassword
+      POSTGRES_DB: alexazul
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://alex:alexpassword@db:5432/alexazul
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      API_KEY: supersecretkey
+    depends_on:
+      - db
