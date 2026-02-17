@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ILLMProvider } from "../../application/contracts/ILLMProvider";
+import { constitutionManager } from "../../config/ConstitutionManager";
 
 export class GeminiAdapter implements ILLMProvider {
     private genAI: GoogleGenerativeAI;
@@ -17,6 +18,7 @@ export class GeminiAdapter implements ILLMProvider {
             stage: string;
             trustLevel: number;
         };
+        constitutionId?: string;
     }): Promise<{
         tags: string[];
         signals: string[];
@@ -78,13 +80,24 @@ Señales permitidas:
             stage: string;
             trustLevel: number;
         };
+        constitutionId?: string;
+        customContext?: string;
     }): Promise<{
         text: string;
         tokensUsed: number;
     }> {
+        const constitution = input.constitutionId 
+            ? constitutionManager.get(input.constitutionId)
+            : constitutionManager.get("conversational-programming");
+
+        const systemPrompt = constitutionManager.buildPrompt(
+            input.constitutionId || "conversational-programming",
+            input.customContext
+        );
+
         const model = this.genAI.getGenerativeModel({
             model: this.modelName,
-            systemInstruction: "Eres Alexa, una Technical Co-founder y experta programadora de Puentes Globales. Tu objetivo es ayudar a Gabriel a programar sistemas robustos y escalables. Eres directa, técnica, pero con visión de negocio. Usas arquitectura hexagonal y Clean Code por defecto."
+            systemInstruction: systemPrompt
         });
 
         const chatHistory = input.history.map(h => ({

@@ -6,6 +6,7 @@ export interface ILLMProvider {
       stage: string;
       trustLevel: number;
     };
+    constitutionId?: string;
   }): Promise<{
     tags: string[];
     signals: string[];
@@ -19,6 +20,8 @@ export interface ILLMProvider {
       stage: string;
       trustLevel: number;
     };
+    constitutionId?: string;
+    customContext?: string;
   }): Promise<{
     text: string;
     tokensUsed: number;

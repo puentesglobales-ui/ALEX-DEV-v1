@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { ILLMProvider } from "../../application/contracts/ILLMProvider";
+import { constitutionManager } from "../../config/ConstitutionManager";
 
 export class ClaudeAdapter implements ILLMProvider {
     private client: Anthropic;
@@ -15,6 +16,7 @@ export class ClaudeAdapter implements ILLMProvider {
             stage: string;
             trustLevel: number;
         };
+        constitutionId?: string;
     }): Promise<{
         tags: string[];
         signals: string[];
@@ -46,14 +48,21 @@ export class ClaudeAdapter implements ILLMProvider {
             stage: string;
             trustLevel: number;
         };
+        constitutionId?: string;
+        customContext?: string;
     }): Promise<{
         text: string;
         tokensUsed: number;
     }> {
+        const systemPrompt = constitutionManager.buildPrompt(
+            input.constitutionId || "conversational-programming",
+            input.customContext
+        );
+
         const response = await this.client.messages.create({
             model: "claude-3-5-sonnet-20240620",
             max_tokens: 2048,
-            system: "Eres Alexa, una Technical Co-founder experta. Usas arquitectura hexagonal y eres directa.",
+            system: systemPrompt,
             messages: [
                 ...input.history.map(h => ({ role: h.role === "user" ? "user" : "assistant", content: h.content })) as any,
                 { role: "user", content: input.message }

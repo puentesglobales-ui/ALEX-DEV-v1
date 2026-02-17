@@ -1,0 +1,55 @@
+{
+  "greetings": [
+    { "trigger": ["hola", "hello", "hi", "buenos días", "buenas"], "response": "¡Hola! ¿En qué puedo ayudarte hoy?", "category": "greeting" },
+    { "trigger": ["quiero información", "info", "información"], "response": "¡Claro! ¿Sobre qué tema necesitas información?", "category": "info" },
+    { "trigger": ["precio", "costo", "cuánto", "valor"], "response": "¿Cuál es el producto o servicio que te interesa? Así te paso los detalles.", "category": "pricing" },
+    { "trigger": ["comprar", "adquirir", "obtener"], "response": "¡Perfecto! ¿Qué producto te interesa?", "category": "purchase" },
+    { "trigger": ["problema", "error", "no funciona", "ayuda"], "response": "Entiendo que tienes un problema. ¿Me cuentas qué está pasando?", "category": "support" },
+    { "trigger": ["gracias", "thanks", "thank you"], "response": "¡De nada! ¿Algo más en lo que pueda ayudarte?", "category": "thanks" },
+    { "trigger": ["adiós", "bye", " chau", "hasta luego"], "response": "¡Hasta luego! Que tengas un buen día.", "category": "farewell" }
+  ],
+  
+  "sentiment_responses": {
+    "angry": [
+      "Entiendo tu frustración. Voy a escalar esto para que un agente te ayude personalmente.",
+      "Lamento la situación. Un humano revisará tu caso inmediatamente."
+    ],
+    "sad": [
+      "Estoy aquí para ayudarte. ¿Qué puedo hacer para mejorar tu día?",
+      "Siento mucho eso. Permíteme orientarte para resolverlo."
+    ],
+    "urgent": [
+      "Entiendo la urgencia. Voy a priorizar tu caso.",
+      "¡Dame un momento! Esto es importante y lo atenderé rápido."
+    ]
+  },
+
+  "escalation_triggers": [
+    "hablar con humano",
+    "hablar con persona",
+    "hablar con alguien",
+    "manager",
+    "jefe",
+    "supervisor",
+    "no me понима",
+    "esto es inaceptable",
+    "voy a投诉",
+    "queja",
+    "abogado"
+  ],
+
+  "transfer_keywords": [
+    "refund", "devolución", "dinero", "demanda",
+    "hablar con persona", "no me ayudan",
+    "error grave", "urgente"
+  ],
+
+  "templates": {
+    "welcome": "¡Hola {name}! Soy Alex, tu asistente. ¿En qué puedo ayudarte?",
+    "welcome_back": "¡Bienvenido de nuevo, {name}! ¿Continuamos donde lo dejamos?",
+    "support_ticket": "He creado un ticket de soporte #{ticketId}. Un agente te contactará pronto.",
+    "lead_captured": "¡Perfecto! He guardado tus datos. Un vendedor te contactará en breve.",
+    "appointment_scheduled": "Tu cita está confirmada para el {date} a las {time}. ¿Algo más?",
+    "fallback": "No estoy seguro de cómo ayudarte con eso. ¿Podrías darme más detalles?"
+  }
+}

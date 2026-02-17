@@ -5,6 +5,8 @@ import { ILLMProvider } from "../contracts/ILLMProvider";
 export interface ChatInput {
     userId: string;
     message: string;
+    constitutionId?: string;
+    customContext?: string;
 }
 
 export interface ChatOutput {
@@ -33,21 +35,16 @@ export class GenerateResponse {
                 content: (e.metadata as any).content
             }));
 
-        // 2. Generar respuesta usando el proveedor de LLM
-        // (Nota: Tendríamos que ampliar el contrato ILLMProvider para soportar chat, 
-        // pero por ahora podemos usar una implementación directa o genérica)
-
-        // Para simplificar, asumiremos que el llmProvider puede generar respuestas
-        // Si no, lo simulamos o lo añadimos al contrato.
-
-        // Por ahora, vamos a delegar esto a una nueva función en el Adaptador
+        // 2. Generar respuesta usando el proveedor de LLM con constitución
         const result = await (this.llmProvider as any).generateResponse({
             message: input.message,
             history,
             context: {
                 stage: conversation.stage,
                 trustLevel: conversation.trustLevel
-            }
+            },
+            constitutionId: input.constitutionId,
+            customContext: input.customContext
         });
 
         // 3. Registrar la respuesta del asistente

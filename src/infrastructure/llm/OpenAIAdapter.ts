@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { ILLMProvider } from "../../application/contracts/ILLMProvider";
+import { constitutionManager } from "../../config/ConstitutionManager";
 
 export class OpenAIAdapter implements ILLMProvider {
   private client: OpenAI;
@@ -15,13 +16,14 @@ export class OpenAIAdapter implements ILLMProvider {
       stage: string;
       trustLevel: number;
     };
+    constitutionId?: string;
   }): Promise<{
     tags: string[];
     signals: string[];
     tokensUsed: number;
   }> {
     const prompt = `
-Analiza el mensaje: "${input.message}"
+ Analiza el mensaje: "${input.message}"
 Stage: ${input.context.stage}, Trust: ${input.context.trustLevel}
 Responde JSON: { "tags": [], "signals": [] }
 Señales: BUY_INTENT, TECHNICAL_QUESTION, OBJECTION, POSITIVE_EMOTION, BUDGET_CONFIRMED.
@@ -51,18 +53,29 @@ Señales: BUY_INTENT, TECHNICAL_QUESTION, OBJECTION, POSITIVE_EMOTION, BUDGET_CO
       stage: string;
       trustLevel: number;
     };
+    constitutionId?: string;
+    customContext?: string;
   }): Promise<{
     text: string;
     tokensUsed: number;
   }> {
+    const constitution = input.constitutionId 
+      ? constitutionManager.get(input.constitutionId)
+      : constitutionManager.get("conversational-programming");
+
+    const systemPrompt = constitutionManager.buildPrompt(
+      input.constitutionId || "conversational-programming",
+      input.customContext
+    );
+
     const response = await this.client.chat.completions.create({
       model: "gpt-4o",
       messages: [
-        { role: "system", content: "Eres Alexa, una Technical Co-founder y experta programadora de Puentes Globales. Ayudas a Gabriel con arquitectura hexagonal y Clean Code." },
+        { role: "system", content: systemPrompt },
         ...input.history as any,
         { role: "user", content: input.message }
       ],
-      temperature: 0.7
+      temperature: constitution?.communication.responseFormat === "direct" ? 0.3 : 0.7
     });
 
     return {

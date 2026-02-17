@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { ILLMProvider } from "../../application/contracts/ILLMProvider";
+import { constitutionManager } from "../../config/ConstitutionManager";
 
 export class DeepSeekAdapter implements ILLMProvider {
     private client: OpenAI;
@@ -18,6 +19,7 @@ export class DeepSeekAdapter implements ILLMProvider {
             stage: string;
             trustLevel: number;
         };
+        constitutionId?: string;
     }): Promise<{
         tags: string[];
         signals: string[];
@@ -49,14 +51,21 @@ export class DeepSeekAdapter implements ILLMProvider {
             stage: string;
             trustLevel: number;
         };
+        constitutionId?: string;
+        customContext?: string;
     }): Promise<{
         text: string;
         tokensUsed: number;
     }> {
+        const systemPrompt = constitutionManager.buildPrompt(
+            input.constitutionId || "conversational-programming",
+            input.customContext
+        );
+
         const response = await this.client.chat.completions.create({
             model: "deepseek-chat",
             messages: [
-                { role: "system", content: "Eres Alexa, una Technical Co-founder experta. Usas arquitectura hexagonal y eres directa." },
+                { role: "system", content: systemPrompt },
                 ...input.history as any,
                 { role: "user", content: input.message }
             ],

@@ -46,4 +46,9 @@ export class PrismaConversationRepository implements IConversationRepository {
     });
     return conversation as ConversationState | null;
   }
+
+  async findAll(): Promise<ConversationState[]> {
+    const conversations = await this.prisma.conversationState.findMany();
+    return conversations as ConversationState[];
+  }
 }
